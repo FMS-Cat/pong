@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link href='http://fonts.googleapis.com/css?family=Dosis:600' rel='stylesheet' type='text/css'>
+		<title>pong</title>
+		<style type="text/css">
+			*
+			{
+				font-family:'Dosis',sans-serif;
+				color:#FFF;
+				background:#000;
+				overflow:hidden;
+			}
+
+			.pad
+			{
+				position:absolute;
+				width:20px;
+				height:160px;
+				background:#FFF;
+			}
+
+			.score
+			{
+				position:absolute;
+				top:60px;
+				width:50%;
+				text-align:center;
+				font-size:128px;
+				background:none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="pad" id="player"></div>
+		<div class="pad" id="enemy"></div>
+		<div id="ball" style="position:absolute;width:20px;height:20px;background:#FFF;"></div>
+		<div class="score" id="scoreP" style="left:0px;">0</div>
+		<div class="score" id="scoreE" style="right:0px;">0</div>
+		<script>
+			function o(i){return document.getElementById(i)}
+
+			var W=window.innerWidth,H=window.innerHeight;
+
+			var player=
+			{
+				x:60,
+				y:H/2,
+				w:20,
+				h:160,
+				score:0,
+			};
+
+			var enemy=
+			{
+				x:W-60,
+				y:H/2,
+				w:20,
+				h:160,
+				score:0,
+			};
+
+			var ball=
+			{
+				x:W/2,
+				y:H/2,
+				w:20,
+				h:20,
+				v:3,
+				a:Math.PI/4,
+				r:function(){with(this){x=W/2;y=H/2;v=3;a=Math.PI/4;}}
+			};
+
+			function d()
+			{
+				o('player').style.left=(player.x-player.w/2)+"px";
+				o('player').style.top=(player.y-player.h/2)+"px";
+				o('enemy').style.left=(enemy.x-enemy.w/2)+"px";
+				o('enemy').style.top=(enemy.y-enemy.h/2)+"px";
+				o('ball').style.left=(ball.x-ball.w/2)+"px";
+				o('ball').style.top=(ball.y-ball.h/2)+"px";
+			}
+			d();
+
+			document.addEventListener('mousemove',function(e)
+			{
+				player.y=e.y;
+				o('player').style.top=(e.y-80)+'px';
+			});
+
+			function l()
+			{
+				for(var c=0;c<3;c++)
+				{
+					with(ball)
+					{
+						if(y<0+h/2){a=Math.PI*2-a;}
+						if(H-h/2<y){a=Math.PI*2-a;}
+						if(x<0-w/2){o('scoreE').innerHTML=++enemy.score;r();}
+						if(W+w/2<x){o('scoreP').innerHTML=++player.score;r();}
+						if(Math.abs(enemy.x-x)<enemy.w/2+w/2&&Math.abs(enemy.y-y)<enemy.h/2+h/2){x=enemy.x-enemy.w/2-w/2;a=Math.PI-a;v*=1.02;}
+						if(Math.abs(player.x-x)<player.w/2+w/2&&Math.abs(player.y-y)<player.h/2+h/2){x=player.x+player.w/2+w/2;a=Math.PI-a;v*=1.02;}
+
+						x+=v*Math.cos(a);
+						y+=v*Math.sin(a);
+					}
+					enemy.y=ball.y;
+				}
+				d();
+				setTimeout("l()",5);
+			}
+			l();
+		</script>
+	</body>
+</html>
